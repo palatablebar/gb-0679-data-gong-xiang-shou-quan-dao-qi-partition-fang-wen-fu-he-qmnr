@@ -33,6 +33,8 @@ def create_app():
         return pipeline.execute(file.read())
     @application.get("/api/runs")
     def history(): return {"runs":store.history()}
+    @application.get("/api/backfill/attempts")
+    def backfill_attempts(): return {"attempts":store.attempts()}
     @application.get("/api/runs/<run_id>")
     def run_detail(run_id): return store.get(run_id)
     @application.post("/api/runs/<run_id>/review")

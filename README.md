@@ -20,10 +20,13 @@ docker compose exec -T app pytest -q
 - 5. 分区判定：`/partitions`，`/api/partitions`。
 - 6. 访问对账：`/audit`，`/api/audit`。
 - 7. 审计归档：`/seals`，`/api/seals`。
+- 8. 补录追溯裁决：`/backfill`，`/api/backfill`，台账 `/api/backfill/attempts`。
 
 ## 核心规则
 
 拒绝规则优先于允许，授权必须同时命中资源、分区和生效窗；显式拒绝不得被宽授权覆盖。
+
+补录授权（访问后才补登记）一律**自规则到达时刻生效，不按单据日期回溯**：单据日期只作为业务主张留证。每批补录形成唯一追溯裁决（RA-/RAB- 编号），授权命中、分区判定、对账差异与证据导出均服从该裁决；同一补录重试按自然键和 request_key 折叠、不重复计数；依据不完整的补录不能封存（证据仍可导出但标记 BLOCKED，封存签核返回409并保留旧版结论）。
 
 ## 演示
 

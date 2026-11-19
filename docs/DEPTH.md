@@ -13,6 +13,7 @@
 | M5 分区判定 | 查看并运行分区判定 | `/api/partitions` | `app/modules/m5_partitions/rules.py` | `tests/test_m5.py` |
 | M6 访问对账 | 查看并运行访问对账 | `/api/audit` | `app/modules/m6_audit/rules.py` | `tests/test_m6.py` |
 | M7 审计归档 | 查看并运行审计归档 | `/api/seals` | `app/modules/m7_seals/rules.py` | `tests/test_m7.py` |
+| M8 补录追溯裁决 | 提交补录批次并查看唯一追溯裁决 | `/api/backfill` | `app/modules/m8_backfill/rules.py` | `tests/test_m8.py` |
 
 ## 陷阱登记
 
@@ -29,6 +30,10 @@
 | TRAP-07 | 上游结果空值 | 误报拒绝 | 隔离缺失 | `app/values.py` | `tests/test_m3.py::test_real_missing_decision_not_zero` |
 | TRAP-19 | 允许与拒绝重叠 | 后写覆盖 | 拒绝优先且排序证据 | `app/modules/m4_conflicts/rules.py` | `tests/test_m4.py::test_deny_priority_counterexample` |
 | TRAP-23 | 授权到期点 | 多放行一次 | 半开生效窗 | `app/modules/m3_grants/rules.py` | `tests/test_m3.py::test_expiry_endpoint_excluded` |
+| TRAP-28 | 补录单据回溯 | 按单据日期追溯放行历史访问 | 裁决固定arrival_effective，自规则到达时刻生效，单据日期仅留证 | `app/modules/m8_backfill/rules.py` | `tests/test_m8.py::test_ruling_is_arrival_effective_not_document_backdate` |
+| TRAP-29 | 补录重试重复计数 | 每次提交产生新授权/新计数 | 自然键折叠+request_key台账唯一约束 | `app/modules/m8_backfill/rules.py`,`app/store.py` | `tests/test_m8.py::test_identical_retry_collapsed_not_double_counted` |
+| TRAP-30 | 依据不完整仍封存 | 空依据补录直接归档 | 不入册授权+sealable=false+封存409保留旧版 | `app/modules/m7_seals/rules.py`,`app/store.py` | `tests/test_m8.py::test_seal_review_rejected_keeps_previous_version` |
+| TRAP-31 | 补录回切覆盖旧结论 | 失败提交改写历史批次 | 形状非法整批不落库；条件更新失败保留旧payload与版本 | `app/pipeline.py`,`app/store.py` | `tests/test_m8.py::test_bad_shape_does_not_persist` |
 
 ## 对账规则
 

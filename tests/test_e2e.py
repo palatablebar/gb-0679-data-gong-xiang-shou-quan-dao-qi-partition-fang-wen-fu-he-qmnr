@@ -3,7 +3,7 @@ from app.pipeline import execute,load_sample
 from app import store
 def test_full_sample_flow(client):
     r=client.post("/api/runs",json={"sample":"dirty.csv"});assert r.status_code==200
-    p=r.get_json();assert len(p["stages"])==7
+    p=r.get_json();assert len(p["stages"])==8
     assert p["stages"][5]["metrics"]["balanced"] is True
 def test_idempotent_real_input(sample):
     a=execute(sample);b=execute(sample)
